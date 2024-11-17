@@ -8,5 +8,5 @@ export const dbConnection = () => {
   }).catch((err)=>{
     console.log("Some error occured while connecting to database",err.message);
     
-  })
+  }) 
 };

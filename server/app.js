@@ -22,5 +22,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload({ useTempFIles: true, tempFileDir: "/temp/" }));
 
 app.use(errorMiddleware);
-dbConnection();
+dbConnection(); 
 export default app;
