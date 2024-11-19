@@ -56,4 +56,3 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
   }
   generateToken(user, "User Logged In Successfully!", 200, res);
 });
-
