@@ -6,6 +6,7 @@ import fileUpload from "express-fileupload";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
 import { dbConnection } from "./config/dbConnection.js";
 import messageRouter from "./routers/messageRouter.js";
+import userRouter from "./routers/userRouter.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(fileUpload({ useTempFIles: true, tempFileDir: "/temp/" }));
 //Routers
 
 app.use("/api/v1/message", messageRouter);
+app.use("/api/v1/user",userRouter)
 
 dbConnection();
 app.use(errorMiddleware);
