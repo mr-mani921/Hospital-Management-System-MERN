@@ -87,4 +87,66 @@ export const addAdmin = catchAsyncErrors(async (req, res, next) => {
   generateToken(newAdmin, "New Admin Registered Successfully", 201, res);
 });
 
+export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return next(new ErrorHandler("Avatar is Reguired", 400));
+  }
 
+  const { docAvatar } = req.files;
+
+  const {
+    firstName,
+    lastName,
+    email,
+    dob,
+    phone,
+    nic,
+    gender,
+    docDepartment,
+    password,
+  } = req.body;
+
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !dob ||
+    !phone ||
+    !nic ||
+    !gender ||
+    !docDepartment ||
+    !password
+  ) {
+    return next(new ErrorHandler("Please Fill Full Form", 400));
+  }
+
+  const isRegistered = await userModel.findOne({ email });
+  if (isRegistered) {
+    return next(new ErrorHandler("Doctor with this email already exist", 400));
+  }
+
+  const cloudinaryResponse = cloudinary.uploader.upload(docAvatar.tempFilePath);
+
+  if (!cloudinaryResponse || cloudinaryResponse.error) {
+    console.error("Cloudinary Response", cloudinaryResponse.error);
+    return next(new ErrorHandler("Failed to upload file to cloudinary", 500));
+  }
+
+  const newDoc = await userModel.create({
+    firstName,
+    lastName,
+    email,
+    dob,
+    phone,
+    nic,
+    gender,
+    role: "Doctor",
+    docDepartment,
+    docAvatar: {
+      public_id: cloudinaryResponse.public_id,
+      url: cloudinaryResponse.secure_url,
+    },
+    password,
+  });
+  generateToken(newDoc, "New Doctor Registered", 200, res);
+});
