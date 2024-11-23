@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   avatar: {
-    public_is: String,
+    public_id: String,
     url: String,
   },
 });
@@ -70,7 +70,8 @@ userSchema.methods.comparePasswords = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-userSchema.methods.generateToken = async function () {
+
+userSchema.methods.generateJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRY,
   });
