@@ -21,6 +21,7 @@ export const generateToken = (user, message, statusCode, res) => {
   res.status(statusCode).json({
     success: true,
     message,
+    user,
     token, // Include token in the response for debugging purposes
   });
 };

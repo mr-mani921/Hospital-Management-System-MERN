@@ -3,10 +3,8 @@ import { userModel } from "../models/user.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/errorMiddleware.js";
 export const isAdminAuthenticated = catchAsyncErrors(async (req, res, next) => {
-  console.log(req.cookies);
-  
   const token = req.cookies.adminToken;
-  console.log('The token',token)
+  
   if (!token) {
     return next(new ErrorHandler("You need to Sign In First", 503));
   }

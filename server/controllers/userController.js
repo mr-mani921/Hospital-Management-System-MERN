@@ -45,7 +45,6 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Please Fill Full Form", 400));
   }
   const user = await userModel.findOne({ email }).select("+password");
-  console.log("The found User is ", user);
   if (!user) {
     return next(new ErrorHandler("Email or Password incorrct", 400));
   }
@@ -88,11 +87,6 @@ export const addAdmin = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Avatar is Reguired", 400));
-  }
-
-  const { docAvatar } = req.files;
 
   const {
     firstName,
@@ -125,12 +119,6 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Doctor with this email already exist", 400));
   }
 
-  const cloudinaryResponse = cloudinary.uploader.upload(docAvatar.tempFilePath);
-
-  if (!cloudinaryResponse || cloudinaryResponse.error) {
-    console.error("Cloudinary Response", cloudinaryResponse.error);
-    return next(new ErrorHandler("Failed to upload file to cloudinary", 500));
-  }
 
   const newDoc = await userModel.create({
     firstName,
@@ -142,11 +130,17 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     gender,
     role: "Doctor",
     docDepartment,
-    docAvatar: {
-      public_id: cloudinaryResponse.public_id,
-      url: cloudinaryResponse.secure_url,
-    },
     password,
   });
   generateToken(newDoc, "New Doctor Registered", 200, res);
+});
+
+
+export const getAllDoctors = catchAsyncErrors(async (req, res, next) => {
+  const doctors = await userModel.find({ role: "Doctor" });
+  return res.status(200).json({
+    success: true,
+    message: "Founded all the registered Doctors",
+    doctors,
+  });
 });
