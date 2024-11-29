@@ -20,7 +20,6 @@ export const registerPatient = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Fill Full Form", 400));
   }
   const isRegistered = await userModel.findOne({ email });
-  console.log("user", isRegistered);
   if (isRegistered) {
     return next(new ErrorHandler("User With Same Email already Registered"));
   }
@@ -144,3 +143,39 @@ export const getAllDoctors = catchAsyncErrors(async (req, res, next) => {
     doctors,
   });
 });
+
+export const getUser = catchAsyncErrors(async(req,res,next)=>{
+  const user = req.user
+  return res.status(200).json({
+    success:true,
+    message: "The Logged In User Is",
+    user:user
+  });
+});
+export const logoutAdmin = catchAsyncErrors(async(req,res,next)=> {
+  res.status(200).cookie("adminToken","",{
+    httpOnly:true,
+    expires: new Date(Date.now())
+  }).json({
+    success:true,
+    message:"Admin Logout successfully"
+  })
+})
+export const logoutPatient = catchAsyncErrors(async(req,res,next)=> {
+  res.status(200).cookie("patientToken","",{
+    httpOnly:true,
+    expires: new Date(Date.now())
+  }).json({
+    success:true,
+    message:"Patient Logout successfully"
+  })
+})
+export const logoutDoctor = catchAsyncErrors(async(req,res,next)=> {
+  res.status(200).cookie("doctorToken","",{
+    httpOnly:true,
+    expires: new Date(Date.now())
+  }).json({
+    success:true,
+    message:"Doctor Logout successfully"
+  })
+})
